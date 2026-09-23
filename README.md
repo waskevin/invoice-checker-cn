@@ -24,6 +24,7 @@ https://github.com/waskevin/invoice-checker-cn/releases
 - 成功读取购买方、开票日期、票型和价税合计后，自动将原 PDF 改名为
   `购买方_销售方_YYYY-MM-DD_普票或专票_价税合计.pdf`；如果同名文件已存在，自动追加 `_2`、`_3`，不会覆盖文件。
 - 结果表支持 Ctrl/Shift 多选行；右键选择“从结果中剔除”或按 Delete 键，可从本次结果和金额汇总中移除，原 PDF 文件始终保留。
+- 主窗口只允许打开一个；重复启动、右键菜单或 SendTo 传入的新 PDF 会自动转发到已打开的窗口。
 - 优先读取 PDF 原生文本及文字坐标；扫描件会显示“解析失败”，为后续 OCR 扩展预留了提取层接口。
 - SQLite 数据库保存于 `%LOCALAPPDATA%\InvoiceChecker\invoices.sqlite3`，用于跨次导入检测重复。
 
