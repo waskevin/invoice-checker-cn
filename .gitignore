@@ -1,0 +1,40 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Build outputs
+build/
+dist/
+release/
+*.spec
+
+# Logs
+*.log
+
+# Local databases and exports
+*.db
+*.sqlite
+*.sqlite3
+*.xlsx
+
+# User invoice files
+*.pdf
+*.ofd
+
+# Internal planning notes
+docs/superpowers/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

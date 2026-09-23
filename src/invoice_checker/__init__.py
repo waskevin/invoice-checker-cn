@@ -1,0 +1,2 @@
+"""Invoice Checker desktop application."""
+
