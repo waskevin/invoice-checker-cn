@@ -82,3 +82,18 @@ C:\venvs\invoice-checker\Scripts\python.exe -m pytest -q
 右键批量汇总要求本批所有已识别发票的购买方完全一致；如购买方混杂，软件会导入文件但不会复制合计，并在窗口底部说明原因。
 
 也可替换为 Nuitka；业务代码不依赖打包器。
+
+## 自动发布 Release
+
+仓库已配置 GitHub Actions：当推送 `v` 开头的版本标签时，会自动在 Windows 环境运行测试、打包程序、生成安装包，并创建 GitHub Release。
+
+发布新版本示例：
+
+```powershell
+git tag v1.0.1
+git push origin v1.0.1
+```
+
+发布完成后，用户可在 GitHub Releases 页面下载 `InvoiceChecker-Setup.exe` 安装包。
+
+也可以在 GitHub 仓库页面进入 `Actions` → `Build Windows Release` → `Run workflow`，手动触发一次构建；手动触发只会生成构建产物，不会创建正式 Release。
