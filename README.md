@@ -86,6 +86,7 @@ C:\venvs\invoice-checker\Scripts\python.exe -m pytest -q
 ## 自动发布 Release
 
 仓库已配置 GitHub Actions：当推送 `v` 开头的版本标签时，会自动在 Windows 环境运行测试、打包程序、生成安装包，并创建 GitHub Release。
+安装包版本号会自动取自标签，例如 `v1.0.1` 会生成版本号为 `1.0.1` 的安装包。
 
 发布新版本示例：
 
