@@ -1,3 +1,7 @@
+param(
+    [string]$AppVersion = ''
+)
+
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $CompilerCandidates = @(
     (Join-Path $env:LOCALAPPDATA 'Programs\Inno Setup 6\ISCC.exe'),
@@ -8,5 +12,10 @@ $Compiler = $CompilerCandidates | Where-Object { Test-Path -LiteralPath $_ } | S
 $Script = Join-Path $ProjectRoot 'installer\InvoiceChecker.iss'
 
 if (-not $Compiler) { throw 'Inno Setup compiler not found.' }
-& $Compiler $Script
+$Arguments = @()
+if ($AppVersion) {
+    $Arguments += "/DAppVersion=$AppVersion"
+}
+$Arguments += $Script
+& $Compiler @Arguments
 if ($LASTEXITCODE -ne 0) { throw 'Installer build failed.' }
