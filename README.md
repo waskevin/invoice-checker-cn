@@ -2,6 +2,14 @@
 
 Windows 离线桌面应用：批量导入 PDF 发票，严格核验购买方抬头和税号，读取发票号码、日期、普票/专票、销售方和价税合计（小写），检测重复票并导出 Excel。
 
+## 下载与安装
+
+普通用户请在 Releases 页面下载最新版安装包：
+
+https://github.com/waskevin/invoice-checker-cn/releases
+
+下载 `InvoiceChecker-Setup.exe` 后双击安装即可。
+
 ## 界面预览
 
 ![发票批量核验工具主界面](docs/screenshot-main.png)
@@ -83,18 +91,6 @@ C:\venvs\invoice-checker\Scripts\python.exe -m pytest -q
 
 也可替换为 Nuitka；业务代码不依赖打包器。
 
-## 自动发布 Release
+## 发布
 
-仓库已配置 GitHub Actions：当推送 `v` 开头的版本标签时，会自动在 Windows 环境运行测试、打包程序、生成安装包，并创建 GitHub Release。
-安装包版本号会自动取自标签，例如 `v1.0.1` 会生成版本号为 `1.0.1` 的安装包。
-
-发布新版本示例：
-
-```powershell
-git tag v1.0.1
-git push origin v1.0.1
-```
-
-发布完成后，用户可在 GitHub Releases 页面下载 `InvoiceChecker-Setup.exe` 安装包。
-
-也可以在 GitHub 仓库页面进入 `Actions` → `Build Windows Release` → `Run workflow`，手动触发一次构建；手动触发只会生成构建产物，不会创建正式 Release。
+开发者如需发布新版本，请参考 [docs/release.md](docs/release.md)。
