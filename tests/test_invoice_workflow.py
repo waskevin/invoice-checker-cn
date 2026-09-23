@@ -21,6 +21,22 @@ TARGET = "示例购买方有限公司"
 TARGET_TAX_ID = "91310000000000000X"
 
 
+def cjk_font_file() -> str:
+    env_font = os.environ.get("INVOICE_CHECKER_TEST_FONT")
+    candidates = [
+        Path(env_font) if env_font else None,
+        Path("C:/Windows/Fonts/simhei.ttf"),
+        Path("C:/Windows/Fonts/msyh.ttc"),
+        Path("C:/Windows/Fonts/simsun.ttc"),
+        Path("C:/Windows/Fonts/simkai.ttf"),
+        Path("C:/Windows/Fonts/Deng.ttf"),
+    ]
+    for candidate in candidates:
+        if candidate and candidate.exists():
+            return str(candidate)
+    raise FileNotFoundError("No CJK font found for generating test PDFs.")
+
+
 def test_hotkey_setting_is_normalized_and_rejects_invalid_combinations(tmp_path: Path) -> None:
     """The captured shortcut must be persisted in the exact format used by the helper."""
     from invoice_checker.hotkey import parse_hotkey
@@ -91,7 +107,7 @@ def test_hotkey_does_not_read_clipboard_when_shell_selection_has_pdfs(tmp_path: 
 def make_invoice_pdf(path: Path, *, buyer: str = TARGET, number: str = "123456789012", total: str = "1130.00", kind: str = "普通发票") -> None:
     document = fitz.open()
     page = document.new_page()
-    page.insert_font(fontname="cjk", fontfile="C:/Windows/Fonts/simhei.ttf")
+    page.insert_font(fontname="cjk", fontfile=cjk_font_file())
     page.insert_text(
         (72, 72),
         "\n".join(
