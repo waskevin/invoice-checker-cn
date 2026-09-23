@@ -4,6 +4,9 @@ from decimal import Decimal
 import hashlib
 from pathlib import Path
 import os
+import threading
+import time
+import uuid
 
 import fitz
 from openpyxl import load_workbook
@@ -63,6 +66,44 @@ def test_command_line_separates_hidden_hotkey_mode_from_pdf_imports() -> None:
     assert helper.hotkey_helper is True
     assert normal.hotkey_helper is False
     assert normal.pdf_files == [Path("one.pdf"), Path("two.pdf")]
+
+
+def test_single_instance_payload_round_trips_forwarded_pdf_paths(tmp_path: Path) -> None:
+    from invoice_checker.single_instance import decode_paths, encode_paths
+
+    first = tmp_path / "发票 1.pdf"
+    second = tmp_path / "invoice_2.pdf"
+
+    assert decode_paths(encode_paths([first, second])) == [first, second]
+
+
+def test_single_instance_forwards_paths_to_existing_listener(tmp_path: Path) -> None:
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    from PySide6.QtWidgets import QApplication
+    from PySide6.QtNetwork import QLocalServer
+    from invoice_checker.single_instance import SingleInstance
+
+    app = QApplication.instance() or QApplication([])
+    server_name = f"invoice-checker-test-{uuid.uuid4()}"
+    pdf = tmp_path / "forwarded.pdf"
+    received: list[list[Path]] = []
+    primary = SingleInstance(server_name)
+    server = primary.listen(received.append)
+    sent: list[bool] = []
+    try:
+        sender = threading.Thread(target=lambda: sent.append(SingleInstance(server_name).send_to_existing([pdf], 3000)))
+        sender.start()
+        deadline = time.time() + 5
+        while not received and time.time() < deadline:
+            app.processEvents()
+            time.sleep(0.01)
+        sender.join(timeout=2)
+        app.processEvents()
+        assert sent == [True]
+        assert received == [[pdf]]
+    finally:
+        server.close()
+        QLocalServer.removeServer(server_name)
 
 
 def test_hotkey_log_records_the_selected_paths(tmp_path: Path) -> None:
