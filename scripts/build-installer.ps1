@@ -1,7 +1,12 @@
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
-$Compiler = Join-Path $env:LOCALAPPDATA 'Programs\Inno Setup 6\ISCC.exe'
+$CompilerCandidates = @(
+    (Join-Path $env:LOCALAPPDATA 'Programs\Inno Setup 6\ISCC.exe'),
+    'C:\Program Files (x86)\Inno Setup 6\ISCC.exe',
+    'C:\Program Files\Inno Setup 6\ISCC.exe'
+)
+$Compiler = $CompilerCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
 $Script = Join-Path $ProjectRoot 'installer\InvoiceChecker.iss'
 
-if (-not (Test-Path -LiteralPath $Compiler)) { throw 'Inno Setup compiler not found.' }
+if (-not $Compiler) { throw 'Inno Setup compiler not found.' }
 & $Compiler $Script
 if ($LASTEXITCODE -ne 0) { throw 'Installer build failed.' }
