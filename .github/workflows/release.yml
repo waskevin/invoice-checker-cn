@@ -49,7 +49,14 @@ jobs:
       - name: Build installer
         shell: pwsh
         run: |
-          .\scripts\build-installer.ps1
+          $version = "${{ github.ref_name }}"
+          if ($version.StartsWith("v")) {
+            $version = $version.Substring(1)
+          }
+          if (-not ($version -match '^\d+\.\d+\.\d+')) {
+            $version = "0.0.0"
+          }
+          .\scripts\build-installer.ps1 -AppVersion $version
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
