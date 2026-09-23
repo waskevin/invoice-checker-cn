@@ -13,6 +13,7 @@ from .hotkey import is_hotkey_available, parse_hotkey
 from .models import InvoiceStatus
 from .services import InvoiceService
 from .shell_integration import ShellImportBatch, import_shell_selection
+from .single_instance import SingleInstance
 
 
 class ShortcutEdit(QLineEdit):
@@ -283,10 +284,22 @@ class MainWindow(QMainWindow):
         export_invoices(Path(filename), self.service.list_invoices(), self.service.summary())
         QMessageBox.information(self, "导出完成", f"已导出到：\n{filename}")
 
+    def receive_forwarded_paths(self, paths: list[Path]) -> None:
+        """Handle a second launch without opening another main window."""
+        if paths:
+            self.import_paths(paths, copy_batch_total=True)
+        self.showNormal()
+        self.raise_()
+        self.activateWindow()
+
 
 def run(service: InvoiceService, initial_paths: list[Path] | None = None) -> int:
     app = QApplication.instance() or QApplication([])
+    instance = SingleInstance()
+    if instance.send_to_existing(initial_paths or []):
+        return 0
     window = MainWindow(service)
+    window.single_instance_server = instance.listen(window.receive_forwarded_paths)  # type: ignore[attr-defined]
     if initial_paths:
         window.import_paths(initial_paths, copy_batch_total=True)
     window.show()
