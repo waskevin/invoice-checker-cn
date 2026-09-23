@@ -4,12 +4,16 @@ param(
 )
 
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
-if (-not (Test-Path -LiteralPath $Python)) {
+$PythonCommand = if (Test-Path -LiteralPath $Python) {
+    (Resolve-Path -LiteralPath $Python).Path
+} elseif (Get-Command $Python -ErrorAction SilentlyContinue) {
+    $Python
+} else {
     throw "Python was not found: $Python"
 }
 
-& $Python -m pip install pyinstaller
-& $Python -m PyInstaller --noconfirm --clean --windowed --onedir --name $Name --paths "$ProjectRoot\src" --collect-binaries PySide6 --collect-binaries shiboken6 "$ProjectRoot\launcher.py"
+& $PythonCommand -m pip install pyinstaller
+& $PythonCommand -m PyInstaller --noconfirm --clean --windowed --onedir --name $Name --paths "$ProjectRoot\src" --collect-binaries PySide6 --collect-binaries shiboken6 "$ProjectRoot\launcher.py"
 if ($LASTEXITCODE -ne 0) {
     throw "Build failed."
 }
